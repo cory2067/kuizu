@@ -1,0 +1,24 @@
+{
+  "name": "kuizu",
+  "version": "1.0.0",
+  "description": "Automatic quiz generation for Japanese teachers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cory2067/kuizu.git"
+  },
+  "author": "Cory Lynch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cory2067/kuizu/issues"
+  },
+  "homepage": "https://github.com/cory2067/kuizu#readme",
+  "dependencies": {
+    "kuromoji": "^0.1.2",
+    "mecab-async": "^0.1.2",
+    "python-shell": "^2.0.0"
+  }
+}
