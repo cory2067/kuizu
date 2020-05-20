@@ -1,9 +1,12 @@
 const kuromoji = require("kuromoji");
 const MeCab = require("mecab-async");
+const fs = require("fs");
 const mecab = new MeCab();
 
+const similarity = require("./similarKanji.json");
+
 const PythonShell = require("python-shell").PythonShell;
-const pyshell = new PythonShell("neighbors.py");
+//const pyshell = new PythonShell("neighbors.py");
 
 const getKuromoji = (input) =>
   new Promise((resolve, reject) => {
@@ -37,7 +40,7 @@ const getMecab = (input) =>
   });
 
 const main = async () => {
-  const input = "私はマサチューセッツ工科大学で日本語を勉強しています";
+  const input = "日本語で話すのは楽しい";
   const [kuroRes, mecabRes] = await Promise.all([
     getKuromoji(input),
     getMecab(input),
@@ -49,17 +52,31 @@ const main = async () => {
   console.log("Analysis from mecab:");
   console.log(mecabRes);
 
-  for (const w of mecabRes) {
+  /*for (const w of mecabRes) {
     if (w.pos === "名詞") {
       const similar = await getNeighbors(w.word);
       console.log(`Similar words to: ${w.word}`);
       console.log(similar);
     }
-  }
+  }*/
 
-  closeNeighbors();
+  console.log("Substitutions:");
+  const sub = [...input].map((char) => {
+    console.log(char, similarity[char]);
+    if (similarity[char]) {
+      return `[${similarity[char]
+        .slice(0, 5)
+        .map((c) => c.char)
+        .join(", ")}]`;
+    }
+    return char;
+  });
+  console.log(sub.join(""));
+
+  //closeNeighbors();
 };
 
+/*
 const requests = {};
 
 const getNeighbors = (word) =>
@@ -81,6 +98,6 @@ pyshell.on("message", (message) => {
 
   requests[res.request].resolve(res.result);
   delete requests[res.request];
-});
+});*/
 
 main();

@@ -1,7 +1,7 @@
 import fasttext
 import fasttext.util
 import json
-ft = fasttext.load_model("./bin/cc.ja.300.bin")
+ft = fasttext.load_model("./data/cc.ja.300.bin")
 
 while True:
     query = input()
