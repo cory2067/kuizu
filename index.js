@@ -6,7 +6,7 @@ const mecab = new MeCab();
 const similarity = require("./similarKanji.json");
 
 const PythonShell = require("python-shell").PythonShell;
-//const pyshell = new PythonShell("neighbors.py");
+const pyshell = new PythonShell("neighbors.py");
 
 const getKuromoji = (input) =>
   new Promise((resolve, reject) => {
@@ -52,31 +52,37 @@ const main = async () => {
   console.log("Analysis from mecab:");
   console.log(mecabRes);
 
-  /*for (const w of mecabRes) {
-    if (w.pos === "名詞") {
+  console.log("\n~ Similar Kanji Quiz ~");
+  for (const w of mecabRes) {
+    console.log(`Choose the correct kanji for ${w.reading}`);
+    const res = [...w.word].map((char) => {
+      if (similarity[char])
+        return similarity[char]
+          .slice(0, 5)
+          .map((c) => c.char)
+          .concat([char])
+          .sort(() => Math.random() - 0.5)
+          .join("・");
+      return char;
+    });
+    console.log(res.join("、　"));
+  }
+
+  console.log("\n~ Nearest-Neighbor Analysis ~");
+  for (const w of mecabRes) {
+    if (["動詞", "形容詞", "名詞"].includes(w.pos)) {
       const similar = await getNeighbors(w.word);
-      console.log(`Similar words to: ${w.word}`);
-      console.log(similar);
+      console.log(
+        `${w.word} (${w.pos}) is related to ${similar
+          .map((w) => w.word)
+          .join(", ")}`
+      );
     }
-  }*/
+  }
 
-  console.log("Substitutions:");
-  const sub = [...input].map((char) => {
-    console.log(char, similarity[char]);
-    if (similarity[char]) {
-      return `[${similarity[char]
-        .slice(0, 5)
-        .map((c) => c.char)
-        .join(", ")}]`;
-    }
-    return char;
-  });
-  console.log(sub.join(""));
-
-  //closeNeighbors();
+  closeNeighbors();
 };
 
-/*
 const requests = {};
 
 const getNeighbors = (word) =>
@@ -98,6 +104,6 @@ pyshell.on("message", (message) => {
 
   requests[res.request].resolve(res.result);
   delete requests[res.request];
-});*/
+});
 
 main();
