@@ -4,9 +4,8 @@ const fs = require("fs");
 const mecab = new MeCab();
 
 const similarity = require("./similarKanji.json");
-
-const PythonShell = require("python-shell").PythonShell;
-const pyshell = new PythonShell("neighbors.py");
+const neighbors = require("./neighbors.js");
+neighbors.init();
 
 const getKuromoji = (input) =>
   new Promise((resolve, reject) => {
@@ -40,7 +39,7 @@ const getMecab = (input) =>
   });
 
 const main = async () => {
-  const input = "日本語で話すのは楽しい";
+  const input = "できる";
   const [kuroRes, mecabRes] = await Promise.all([
     getKuromoji(input),
     getMecab(input),
@@ -71,7 +70,7 @@ const main = async () => {
   console.log("\n~ Nearest-Neighbor Analysis ~");
   for (const w of mecabRes) {
     if (["動詞", "形容詞", "名詞"].includes(w.pos)) {
-      const similar = await getNeighbors(w.word);
+      const similar = await neighbors.get(w.word);
       console.log(
         `${w.word} (${w.pos}) is related to ${similar
           .map((w) => w.word)
@@ -80,30 +79,7 @@ const main = async () => {
     }
   }
 
-  closeNeighbors();
+  neighbors.close();
 };
-
-const requests = {};
-
-const getNeighbors = (word) =>
-  new Promise((resolve, reject) => {
-    requests[word] = { resolve, reject };
-    pyshell.send(word);
-  });
-
-const closeNeighbors = () => {
-  pyshell.send("$kill");
-  pyshell.end((err, code, signal) => {
-    if (err) console.log(err);
-    console.log(`Neighbors exited with code ${code}`);
-  });
-};
-
-pyshell.on("message", (message) => {
-  const res = JSON.parse(message);
-
-  requests[res.request].resolve(res.result);
-  delete requests[res.request];
-});
 
 main();
