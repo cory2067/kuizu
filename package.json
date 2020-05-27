@@ -19,6 +19,7 @@
   "dependencies": {
     "kuromoji": "^0.1.2",
     "mecab-async": "^0.1.2",
-    "python-shell": "^2.0.0"
+    "python-shell": "^2.0.0",
+    "wanakana": "^4.0.2"
   }
 }
