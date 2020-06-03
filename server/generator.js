@@ -5,7 +5,6 @@ const wanakana = require("wanakana");
 async function kanjiQuiz(analyzer, text) {
   const res = await (analyzer === "mecab" ? parse.getMecab(text) : parse.getKuromoji(text));
 
-  const seen = {};
   const words = [];
 
   let index = 0;
@@ -13,7 +12,7 @@ async function kanjiQuiz(analyzer, text) {
     const rawTokens = wanakana.tokenize(w.word, { detailed: true });
     const hasKanji = rawTokens.some((t) => t.type === "kanji");
 
-    if (!hasKanji || seen[w.base]) {
+    if (!hasKanji) {
       words.push({ content: w.word, isQuestion: false });
       continue;
     }
@@ -25,8 +24,6 @@ async function kanjiQuiz(analyzer, text) {
       }
       return [...acc, cur];
     }, []);
-
-    seen[w.base] = true;
 
     const word = [];
     for (const token of tokens) {
@@ -53,6 +50,7 @@ async function kanjiQuiz(analyzer, text) {
       content: w.reading,
       isQuestion: true,
       parts: word,
+      answer: w.word,
       index: ++index,
     });
   }
