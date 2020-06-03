@@ -1,6 +1,6 @@
 const MeCab = require("mecab-async");
 const similarity = require("./similarKanji.json");
-const parse = require("./parse.js");
+const parse = require("./server/parse.js");
 const wanakana = require("wanakana");
 
 /*const neighbors = require("./neighbors.js");
@@ -25,10 +25,7 @@ const getQuestion = async (sentence) => {
     // split up kanji into separate tokens
     const tokens = rawTokens.reduce((acc, cur) => {
       if (cur.type === "kanji") {
-        return [
-          ...acc,
-          ...[...cur.value].map((ch) => ({ type: "kanji", value: ch })),
-        ];
+        return [...acc, ...[...cur.value].map((ch) => ({ type: "kanji", value: ch }))];
       }
       return [...acc, cur];
     }, []);
@@ -80,9 +77,7 @@ const getQuestion = async (sentence) => {
   const questions = words
     .filter((w) => w.isQuestion)
     .map((word) => {
-      const parts = word.chars.map((ch) =>
-        ch.isQuestion ? ch.choices.join("・") : ch.content
-      );
+      const parts = word.chars.map((ch) => (ch.isQuestion ? ch.choices.join("・") : ch.content));
       return `${word.index}. ${parts.join(" | ")}`;
     });
 
@@ -98,8 +93,8 @@ const main = async () => {
     .filter((s) => s);
 
   for (const sentence of sentences) {
-    console.log("Complete the kanji for this sentence:");
-    await getQuestion(sentence);
+    console.log("complete the kanji for this sentence:");
+    await getquestion(sentence);
     console.log("\n-------\n");
   }
 

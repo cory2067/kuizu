@@ -1,0 +1,22 @@
+.RoundButton {
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.RoundButton:hover {
+  background-color: #d4d4d4;
+}
+
+.RoundButton-dark {
+  background-color: #c4c4c4;
+}
+
+.RoundButton-light {
+  background-color: #eee;
+}
+
+.RoundButton:active {
+  transform: translateY(2px);
+}

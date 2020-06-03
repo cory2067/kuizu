@@ -1,0 +1,33 @@
+.NavBar-container {
+  background-color: #c4c4c4;
+  height: 54px;
+  padding: 0px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.NavBar-right {
+  display: flex;
+  align-items: center;
+}
+
+.NavBar-welcome {
+  font-size: 24px;
+  margin-right: 16px;
+}
+
+.NavBar-link {
+  text-decoration: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.NavBar-google {
+  color: #4285f4;
+  margin-right: 2px;
+}
+
+.NavBar-mode {
+  font-size: 16pt;
+}
