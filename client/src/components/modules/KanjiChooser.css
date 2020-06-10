@@ -3,6 +3,10 @@
   margin-bottom: 8px;
 }
 
+span {
+  white-space: pre-wrap;
+}
+
 .KanjiChooser-radio span {
   font-size: 16pt;
 }
