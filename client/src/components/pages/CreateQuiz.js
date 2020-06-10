@@ -7,6 +7,7 @@ import "../../utilities.css";
 // import "./Home.css";
 
 import { Form, Input, Button, Radio, message } from "antd";
+import { navigate } from "@reach/router";
 
 class CreateQuiz extends Component {
   constructor(props) {
@@ -89,6 +90,7 @@ class CreateQuiz extends Component {
   submit = async (form) => {
     await post("/api/save", { quiz: this.state.words, title: form.title });
     message.success(`Created quiz ${form.title}`);
+    navigate("/");
   };
 
   render() {
