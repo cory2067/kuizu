@@ -6,7 +6,7 @@ import "antd/dist/antd.css";
 import "../../utilities.css";
 // import "./Home.css";
 
-import { Form, Input, Button, Radio, notification } from "antd";
+import { Form, Input, Button, Radio, message } from "antd";
 
 class CreateQuiz extends Component {
   constructor(props) {
@@ -86,8 +86,9 @@ class CreateQuiz extends Component {
     }));
   };
 
-  submit = () => {
-    console.log(this.state.words);
+  submit = async (form) => {
+    await post("/api/save", { quiz: this.state.words, title: form.title });
+    message.success(`Created quiz ${form.title}`);
   };
 
   render() {
@@ -132,7 +133,19 @@ class CreateQuiz extends Component {
               );
             })}
           </div>
-          {this.state.words.length > 0 && <Button onClick={this.submit}>Save</Button>}
+
+          {this.state.words.length > 0 && (
+            <Form onFinish={this.submit}>
+              <Form.Item name="title">
+                <Input placeholder="Title" />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Save
+                </Button>
+              </Form.Item>
+            </Form>
+          )}
         </div>
       </div>
     );

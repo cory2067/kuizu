@@ -3,6 +3,7 @@ import { Router } from "@reach/router";
 import NavBar from "./modules/NavBar";
 import NotFound from "./pages/NotFound.js";
 import Home from "./pages/Home.js";
+import Quiz from "./pages/Quiz.js";
 import CreateQuiz from "./pages/CreateQuiz.js";
 
 import "../utilities.css";
@@ -46,6 +47,7 @@ class App extends Component {
         <Router primary={false}>
           <Home path="/" user={this.state.user} />
           <CreateQuiz path="/quiz/create" user={this.state.user} />
+          <Quiz path="/quiz/:id" user={this.state.user} />
           <NotFound default />
         </Router>
       </>

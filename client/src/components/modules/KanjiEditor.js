@@ -50,7 +50,7 @@ class KanjiEditor extends Component {
                 }
 
                 return (
-                  <div className="KanjiEditor-row">
+                  <div key={partIndex} className="KanjiEditor-row">
                     <Button
                       type="default"
                       className="KanjiEditor-spaced"
