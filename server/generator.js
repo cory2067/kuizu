@@ -2,13 +2,21 @@ const similarity = require("../similarKanji.json");
 const parse = require("./parse.js");
 const wanakana = require("wanakana");
 
+const key = (w) => `<${w.reading}|${w.word}>`;
+
 async function kanjiQuiz(analyzer, text) {
   const res = await (analyzer === "mecab" ? parse.getMecab(text) : parse.getKuromoji(text));
 
   const words = [];
+  const seenWords = {};
 
   let index = 0;
   for (const w of res) {
+    if (seenWords[key(w)]) {
+      words.push(seenWords[key(w)]);
+      continue;
+    }
+
     const rawTokens = wanakana.tokenize(w.word, { detailed: true });
     const hasKanji = rawTokens.some((t) => t.type === "kanji");
 
@@ -25,11 +33,11 @@ async function kanjiQuiz(analyzer, text) {
       return [...acc, cur];
     }, []);
 
-    const word = [];
+    const wordParts = [];
     for (const token of tokens) {
       const char = token.value;
       if (!similarity[char]) {
-        word.push({ content: char, isQuestion: false });
+        wordParts.push({ content: char, isQuestion: false });
         continue;
       }
 
@@ -39,20 +47,22 @@ async function kanjiQuiz(analyzer, text) {
         .concat([char])
         .sort(() => Math.random() - 0.5);
 
-      word.push({
+      wordParts.push({
         isQuestion: true,
         choices,
         answer: char,
       });
     }
 
-    words.push({
+    const word = {
       content: w.reading,
       isQuestion: true,
-      parts: word,
+      parts: wordParts,
       answer: w.word,
       index: ++index,
-    });
+    };
+    words.push(word);
+    seenWords[key(w)] = word;
   }
 
   return words;
