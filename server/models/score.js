@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const ScoreSchema = new mongoose.Schema({
   quiz: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz" },
+  student: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   timestamp: Date,
-  score: Number,
+  grade: Number,
   wrong: [{ answer: String, studentAnswer: String }],
 });
 

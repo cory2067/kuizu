@@ -46,33 +46,12 @@ class Quiz extends Component {
   };
 
   grade = async () => {
-    const result = await post("/api/submit", {
+    const result = await post("/api/score", {
       quiz: this.state.words,
       id: this.props.id,
     });
 
     this.setState({ result });
-
-    /*
-    notification.open({
-      message: "Quiz Result",
-      description: (
-        <div>
-          <div>Your score: {score}</div>
-          {wrong.length > 0 && (
-            <>
-              <div>Incorrect answers:</div>
-              {wrong.map((word, i) => (
-                <div key={i}>
-                  {word.studentAnswer} should be {word.answer}
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-      ),
-    });
-    */
   };
 
   render() {
@@ -96,10 +75,10 @@ class Quiz extends Component {
           ) : (
             <div className="u-textCenter">
               <h2>Your Score:</h2>
-              <Progress type="circle" percent={this.state.result.score} />
+              <Progress type="circle" percent={this.state.result.grade} />
               <div className="u-spacer">
-                {this.state.result.wrong.map((wrong) => (
-                  <div>
+                {this.state.result.wrong.map((wrong, i) => (
+                  <div key={i}>
                     {wrong.studentAnswer} should be {wrong.answer}
                   </div>
                 ))}

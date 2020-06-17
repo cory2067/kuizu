@@ -47,7 +47,7 @@ router.getAsync("/quizes", async (req, res) => {
   res.send(await Quiz.find({}).select("title"));
 });
 
-router.postAsync("/submit", async (req, res) => {
+router.postAsync("/score", async (req, res) => {
   const quiz = req.body.quiz.filter((word) => word.isQuestion);
   const answers = {};
   quiz.forEach((word) => (answers[word.answer] = word));
@@ -63,16 +63,28 @@ router.postAsync("/submit", async (req, res) => {
     return parts.filter((p) => p.studentAnswer === p.answer).length / parts.length;
   });
 
-  const score = Math.round((100 * scores.reduce((a, b) => a + b, 0)) / scores.length);
+  const grade = Math.round((100 * scores.reduce((a, b) => a + b, 0)) / scores.length);
 
   const wrong = Object.keys(answers)
     .map((word) => ({ answer: answers[word].answer, studentAnswer: answers[word].content }))
     .filter((word) => word.answer !== word.studentAnswer);
 
-  res.send({
-    score,
+  const score = new Score({
+    quiz: req.body.id,
+    student: req.user._id,
+    timestamp: new Date(),
+    grade,
     wrong,
   });
+
+  await score.save();
+  res.send(score);
+});
+
+router.getAsync("/scores", async (req, res) => {
+  const scores = await Score.find({ quiz: req.query.quiz }).populate("student");
+  const quiz = await Quiz.findOne({ _id: req.query.quiz });
+  res.send({ scores, quiz });
 });
 
 // anything else falls to this "not found" case

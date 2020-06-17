@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import KanjiChooser from "../modules/KanjiChooser";
 import { get, post } from "../../utilities";
 
 import "antd/dist/antd.css";
@@ -26,12 +25,22 @@ class Home extends Component {
       <div className="u-flex-justifyCenter">
         <div>
           <h1>Quiz List</h1>
-          {this.state.quizes.map((quiz, i) => (
-            <div key={i}>
-              <Link to={`/quiz/${quiz._id}`}>{quiz.title}</Link>
-            </div>
-          ))}
-          <Link to="/quiz/create">+ New Quiz</Link>
+          {this.props.user.isTeacher ? (
+            <>
+              {this.state.quizes.map((quiz, i) => (
+                <div key={i}>
+                  <Link to={`/manage/${quiz._id}`}>{quiz.title}</Link>
+                </div>
+              ))}
+              <Link to="/quiz/create">+ New Quiz</Link>
+            </>
+          ) : (
+            this.state.quizes.map((quiz, i) => (
+              <div key={i}>
+                <Link to={`/quiz/${quiz._id}`}>{quiz.title}</Link>
+              </div>
+            ))
+          )}
         </div>
       </div>
     );
