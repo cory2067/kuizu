@@ -4,6 +4,7 @@ const UserSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   googleid: String,
+  isTeacher: Boolean,
 });
 
 // compile model from schema

@@ -59,6 +59,7 @@ async function kanjiQuiz(analyzer, text) {
       isQuestion: true,
       parts: wordParts,
       answer: w.word,
+      base: w.base,
       index: ++index,
     };
     words.push(word);

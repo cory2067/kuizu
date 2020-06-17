@@ -11,6 +11,7 @@ const express = require("express");
 const logger = require("pino")(); // import pino logger
 
 const Quiz = require("./models/quiz");
+const Score = require("./models/score");
 const generator = require("./generator");
 
 //add error handling to async endpoints
@@ -18,10 +19,7 @@ const { decorateRouter } = require("@awaitjs/express");
 
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = decorateRouter(express.Router());
-
-// |------------------------------|
-// | write your API methods below!|
-// |------------------------------|
+const key = (w) => `<${w.reading}|${w.word}>`;
 
 router.get("/whoami", (req, res) => {
   res.send(req.user || {});
@@ -47,6 +45,34 @@ router.getAsync("/quiz", async (req, res) => {
 
 router.getAsync("/quizes", async (req, res) => {
   res.send(await Quiz.find({}).select("title"));
+});
+
+router.postAsync("/submit", async (req, res) => {
+  const quiz = req.body.quiz.filter((word) => word.isQuestion);
+  const answers = {};
+  quiz.forEach((word) => (answers[word.answer] = word));
+
+  const scores = Object.keys(answers).map((word) => {
+    const wordObj = answers[word];
+    if (wordObj.content === wordObj.answer) {
+      return 1;
+    }
+
+    // if wrong, try to reward partial credit
+    const parts = wordObj.parts.filter((part) => part.isQuestion);
+    return parts.filter((p) => p.studentAnswer === p.answer).length / parts.length;
+  });
+
+  const score = Math.round((100 * scores.reduce((a, b) => a + b, 0)) / scores.length);
+
+  const wrong = Object.keys(answers)
+    .map((word) => ({ answer: answers[word].answer, studentAnswer: answers[word].content }))
+    .filter((word) => word.answer !== word.studentAnswer);
+
+  res.send({
+    score,
+    wrong,
+  });
 });
 
 // anything else falls to this "not found" case
