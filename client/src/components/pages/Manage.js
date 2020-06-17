@@ -32,6 +32,7 @@ class Manage extends Component {
         <div>
           <h1>Grades for {this.state.quiz.title}</h1>
           <div>
+            {this.state.scores.length === 0 && <div>Nobody has completed this quiz yet</div>}
             {this.state.scores.map((score) => (
               <div key={score._id}>
                 <Tooltip

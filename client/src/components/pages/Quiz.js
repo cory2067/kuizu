@@ -21,11 +21,29 @@ class Quiz extends Component {
 
   async componentDidMount() {
     const quiz = await get("/api/quiz", { id: this.props.id });
-    console.log(quiz);
     this.setState({
       title: quiz.title,
       words: quiz.body,
     });
+
+    if (this.props.user._id) {
+      const score = await get("/api/score", { quiz: this.props.id, student: this.props.user._id });
+      if (score.grade) this.setState({ result: score });
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (prevProps.user._id !== this.props.user._id) {
+      if (!this.props.user._id) {
+        this.setState({ result: null });
+      } else {
+        const score = await get("/api/score", {
+          quiz: this.props.id,
+          student: this.props.user._id,
+        });
+        if (score.grade) this.setState({ result: score });
+      }
+    }
   }
 
   onKanjiSubmit = (content, realAnswer, studentAnswer) => {
@@ -70,12 +88,14 @@ class Quiz extends Component {
                   return <KanjiChooser submit={this.onKanjiSubmit} key={i} {...word} />;
                 })}
               </div>
-              <Button onClick={this.grade}>Done</Button>
+              <Button onClick={this.grade} disabled={!this.props.user._id}>
+                {this.props.user._id ? "Done" : "Log in to submit"}
+              </Button>
             </>
           ) : (
             <div className="u-textCenter">
               <h2>Your Score:</h2>
-              <Progress type="circle" percent={this.state.result.grade} />
+              <Progress type="circle" status="active" percent={this.state.result.grade} />
               <div className="u-spacer">
                 {this.state.result.wrong.map((wrong, i) => (
                   <div key={i}>

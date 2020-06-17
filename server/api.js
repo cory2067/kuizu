@@ -43,6 +43,10 @@ router.getAsync("/quiz", async (req, res) => {
   res.send(await Quiz.findOne({ _id: req.query.id }));
 });
 
+router.getAsync("/score", async (req, res) => {
+  res.send((await Score.findOne({ student: req.query.student, quiz: req.query.quiz })) || {});
+});
+
 router.getAsync("/quizes", async (req, res) => {
   res.send(await Quiz.find({}).select("title"));
 });
