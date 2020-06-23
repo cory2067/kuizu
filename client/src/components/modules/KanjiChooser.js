@@ -61,7 +61,7 @@ class KanjiChooser extends Component {
             </Form.Item>
           </Form>
         }
-        title={this.props.content}
+        title={this.props.original}
         trigger="click"
         visible={this.state.visible}
         onVisibleChange={this.handleVisibleChange}

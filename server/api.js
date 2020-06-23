@@ -8,11 +8,16 @@
 */
 
 const express = require("express");
+const util = require("util");
+const fs = require("fs");
 const logger = require("pino")(); // import pino logger
 
 const Quiz = require("./models/quiz");
 const Score = require("./models/score");
 const generator = require("./generator");
+
+const textToSpeech = require("@google-cloud/text-to-speech");
+const client = new textToSpeech.TextToSpeechClient();
 
 //add error handling to async endpoints
 const { decorateRouter } = require("@awaitjs/express");
@@ -101,7 +106,31 @@ router.getAsync("/scores", async (req, res) => {
   res.send({ scores, quiz });
 });
 
+router.getAsync("/audio", async (req, res) => {
+  const quiz = await Quiz.findOne({ _id: req.query.id });
+  const text = quiz.body.map((word) => word.answer || word.content).join("");
+
+  const fileRoute = `/audio/${req.query.id}.mp3`;
+  const fileAbsolute = `${__dirname}/../${fileRoute}`;
+
+  if (!fs.existsSync(fileAbsolute)) {
+    logger.info(`Generating audio for ${quiz.title}`);
+    const request = {
+      input: { text },
+      voice: { languageCode: "ja-JP", name: "ja-JP-Wavenet-D" },
+      audioConfig: { audioEncoding: "MP3" },
+    };
+
+    const [response] = await client.synthesizeSpeech(request);
+    const writeFile = util.promisify(fs.writeFile);
+
+    await writeFile(fileAbsolute, response.audioContent, "binary");
+  }
+
+  res.redirect(fileRoute);
+});
 // anything else falls to this "not found" case
+
 router.all("*", (req, res) => {
   logger.warn(`API route not found: ${req.method} ${req.url}`);
   res.status(404).send({ msg: "API route not found" });

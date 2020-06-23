@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import KanjiChooser from "../modules/KanjiChooser";
-import { post, get } from "../../utilities";
+import { post, get, formatParams } from "../../utilities";
 import { Progress } from "antd";
 
 import "antd/dist/antd.css";
@@ -8,6 +8,7 @@ import "../../utilities.css";
 //import "./Home.css";
 
 import { Form, Input, Button, Radio, notification } from "antd";
+import { SoundOutlined } from "@ant-design/icons";
 
 class Quiz extends Component {
   constructor(props) {
@@ -21,9 +22,10 @@ class Quiz extends Component {
 
   async componentDidMount() {
     const quiz = await get("/api/quiz", { id: this.props.id });
+
     this.setState({
       title: quiz.title,
-      words: quiz.body,
+      words: quiz.body.map((word) => ({ ...word, original: word.content })),
     });
 
     if (this.props.user._id) {
@@ -72,6 +74,14 @@ class Quiz extends Component {
     this.setState({ result });
   };
 
+  playAudio = async () => {
+    window.open(
+      `/api/audio?${formatParams({ id: this.props.id })}`,
+      "popup",
+      "width=200,height=100"
+    );
+  };
+
   render() {
     return (
       <div className="u-flex-justifyCenter">
@@ -88,9 +98,15 @@ class Quiz extends Component {
                   return <KanjiChooser submit={this.onKanjiSubmit} key={i} {...word} />;
                 })}
               </div>
-              <Button onClick={this.grade} disabled={!this.props.user._id}>
-                {this.props.user._id ? "Done" : "Log in to submit"}
-              </Button>
+
+              <div>
+                <Button onClick={this.playAudio}>
+                  <SoundOutlined /> Play Audio
+                </Button>
+                <Button type="primary" onClick={this.grade} disabled={!this.props.user._id}>
+                  {this.props.user._id ? "Submit" : "Log in to submit"}
+                </Button>
+              </div>
             </>
           ) : (
             <div className="u-textCenter">

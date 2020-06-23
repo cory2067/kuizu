@@ -22,6 +22,10 @@ const app = express();
 
 app.use(express.json());
 
+// serve audio as static files
+const audioPath = path.resolve(__dirname, "..", "audio");
+app.use("/audio", express.static(audioPath));
+
 // library that stores info about each connected user
 const session = require("express-session");
 

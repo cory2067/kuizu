@@ -11,7 +11,11 @@ const { Column } = Table;
 
 import { LinkOutlined, BarChartOutlined, PlusOutlined } from "@ant-design/icons";
 
-const alpha = (a, b) => (a < b ? 1 : -1);
+const compare = (a, b) => {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+};
 
 class Home extends Component {
   constructor(props) {
@@ -37,19 +41,24 @@ class Home extends Component {
             </Link>
           )}
           <Table dataSource={this.state.quizes}>
-            <Column title="Title" dataIndex="title" key="title" sorter={alpha} />
+            <Column
+              title="Title"
+              dataIndex="title"
+              key="title"
+              sorter={(a, b) => compare(a.title, b.title)}
+            />
             <Column
               title="Creator"
               dataIndex="creator"
               key="creator"
-              sorter={alpha}
+              sorter={(a, b) => compare(a.creator.lastName, b.creator.lastName)}
               render={(user) => `${user.firstName} ${user.lastName}`}
             />
             <Column
               title="Date Created"
               dataIndex="timestamp"
               key="timestamp"
-              sorter={(a, b) => (new Date(a) < new Date(b) ? 1 : -1)}
+              sorter={(a, b) => compare(new Date(a.timestamp), new Date(b.timestamp))}
               render={(date) => new Date(date).toLocaleDateString("en-US")}
             />
             <Column
