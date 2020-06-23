@@ -21,6 +21,13 @@ const { decorateRouter } = require("@awaitjs/express");
 const router = decorateRouter(express.Router());
 const key = (w) => `<${w.reading}|${w.word}>`;
 
+const ensure = (func) => {
+  return (req, res, next) => (func(req, res) ? next() : res.status(403).send({ err: "Forbidden" }));
+};
+
+const isLoggedIn = ensure((req, res) => req.user && req.user._id);
+const isTeacher = ensure((req, res) => req.user && req.user.isTeacher);
+
 router.get("/whoami", (req, res) => {
   res.send(req.user || {});
 });
@@ -30,9 +37,12 @@ router.postAsync("/generate", async (req, res) => {
   res.send(result);
 });
 
-router.postAsync("/save", async (req, res) => {
+router.postAsync("/save", isTeacher, async (req, res) => {
+  console.log(req.user);
   const quiz = new Quiz({
     title: req.body.title,
+    creator: req.user._id,
+    timestamp: new Date(),
     body: req.body.quiz,
   });
   await quiz.save();
@@ -48,7 +58,7 @@ router.getAsync("/score", async (req, res) => {
 });
 
 router.getAsync("/quizes", async (req, res) => {
-  res.send(await Quiz.find({}).select("title"));
+  res.send(await Quiz.find({}).select("-body").populate("creator"));
 });
 
 router.postAsync("/score", async (req, res) => {

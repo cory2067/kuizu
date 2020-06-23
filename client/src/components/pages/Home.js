@@ -6,6 +6,12 @@ import "../../utilities.css";
 import "./Home.css";
 
 import { Link } from "@reach/router";
+import { Table } from "antd";
+const { Column } = Table;
+
+import { LinkOutlined, BarChartOutlined, PlusOutlined } from "@ant-design/icons";
+
+const alpha = (a, b) => (a < b ? 1 : -1);
 
 class Home extends Component {
   constructor(props) {
@@ -24,23 +30,55 @@ class Home extends Component {
     return (
       <div className="u-flex-justifyCenter">
         <div>
-          <h1>Quiz List</h1>
-          {this.props.user.isTeacher ? (
-            <>
-              {this.state.quizes.map((quiz, i) => (
-                <div key={i}>
-                  <Link to={`/manage/${quiz._id}`}>{quiz.title}</Link>
-                </div>
-              ))}
-              <Link to="/quiz/create">+ New Quiz</Link>
-            </>
-          ) : (
-            this.state.quizes.map((quiz, i) => (
-              <div key={i}>
-                <Link to={`/quiz/${quiz._id}`}>{quiz.title}</Link>
-              </div>
-            ))
+          <h1 className="Home-header">Quiz List</h1>
+          {this.props.user.isTeacher && (
+            <Link to="/quiz/create">
+              <PlusOutlined /> New Quiz
+            </Link>
           )}
+          <Table dataSource={this.state.quizes}>
+            <Column title="Title" dataIndex="title" key="title" sorter={alpha} />
+            <Column
+              title="Creator"
+              dataIndex="creator"
+              key="creator"
+              sorter={alpha}
+              render={(user) => `${user.firstName} ${user.lastName}`}
+            />
+            <Column
+              title="Date Created"
+              dataIndex="timestamp"
+              key="timestamp"
+              sorter={(a, b) => (new Date(a) < new Date(b) ? 1 : -1)}
+              render={(date) => new Date(date).toLocaleDateString("en-US")}
+            />
+            <Column
+              title="Quiz Link"
+              dataIndex="_id"
+              key="quiz"
+              render={(id) => (
+                <div className="Home-button">
+                  <Link to={`/quiz/${id}`}>
+                    <LinkOutlined />
+                  </Link>
+                </div>
+              )}
+            />
+            {this.props.user.isTeacher && (
+              <Column
+                title="Results"
+                dataIndex="_id"
+                key="results"
+                render={(id) => (
+                  <div className="Home-button">
+                    <Link to={`/manage/${id}`}>
+                      <BarChartOutlined />
+                    </Link>
+                  </div>
+                )}
+              />
+            )}
+          </Table>
         </div>
       </div>
     );

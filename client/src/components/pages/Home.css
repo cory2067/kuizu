@@ -1,0 +1,10 @@
+.Home-button {
+  font-size: 18pt;
+  text-align: center;
+  line-height: 0;
+}
+
+.Home-header {
+  text-align: center;
+  margin-bottom: var(--m);
+}
