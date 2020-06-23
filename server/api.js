@@ -17,7 +17,12 @@ const Score = require("./models/score");
 const generator = require("./generator");
 
 const textToSpeech = require("@google-cloud/text-to-speech");
-const client = new textToSpeech.TextToSpeechClient();
+const client = new textToSpeech.TextToSpeechClient({
+  credentials: {
+    client_email: process.env.TTS_EMAIL,
+    private_key: process.env.TTS_KEY,
+  },
+});
 
 //add error handling to async endpoints
 const { decorateRouter } = require("@awaitjs/express");
