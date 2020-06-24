@@ -28,15 +28,25 @@ class Home extends Component {
   async componentDidMount() {
     const quizes = await get("/api/quizes", {});
 
+    this.sortList(quizes);
+    this.setState({ quizes });
+  }
+
+  sortList = (quizes) => {
     // sort so that your own quizes are listed first
     const mine = (quiz) => quiz.creator._id === this.props.user._id;
-    quizes.sort((a, b) => {
+    return quizes.sort((a, b) => {
       if (mine(a) && !mine(b)) return -1;
       if (!mine(a) && mine(b)) return 1;
       return 0;
     });
+  };
 
-    this.setState({ quizes });
+  componentDidUpdate(prevProps) {
+    if (!prevProps.user._id && this.props.user._id) {
+      const quizes = this.sortList([...this.state.quizes]);
+      this.setState({ quizes });
+    }
   }
 
   render() {
