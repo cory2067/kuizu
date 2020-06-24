@@ -3,9 +3,11 @@ import { get, post } from "../../utilities";
 
 import "antd/dist/antd.css";
 import "../../utilities.css";
-import "./Home.css";
+import "./Manage.css";
 
-import { Tooltip } from "antd";
+import { Tooltip, Table, Modal } from "antd";
+import { FormOutlined } from "@ant-design/icons";
+const { Column } = Table;
 
 import { Link } from "@reach/router";
 
@@ -26,23 +28,46 @@ class Manage extends Component {
     });
   }
 
+  showScore = (wrong) => {
+    Modal.info({
+      title: "Incorrect Answers",
+      content: (
+        <div>
+          {wrong.map((w) => (
+            <p>
+              {w.studentAnswer} (should be {w.answer})
+            </p>
+          ))}
+        </div>
+      ),
+      onOk() {},
+    });
+  };
+
   render() {
     return (
       <div className="u-flex-justifyCenter">
         <div>
           <h1>Grades for {this.state.quiz.title}</h1>
-          <div>
-            {this.state.scores.length === 0 && <div>Nobody has completed this quiz yet</div>}
-            {this.state.scores.map((score) => (
-              <div key={score._id}>
-                <Tooltip
-                  title={score.wrong.map((w) => `${w.studentAnswer} (${w.answer})`).join(", ")}
-                >
-                  {score.student.firstName} {score.student.lastName}: {score.grade}%
-                </Tooltip>
-              </div>
-            ))}
-          </div>
+          <Table dataSource={this.state.scores}>
+            <Column
+              title="Student"
+              dataIndex="student"
+              key="student"
+              render={(student) => `${student.firstName} ${student.lastName}`}
+            />
+            <Column title="Grade" dataIndex="grade" key="grade" render={(grade) => `${grade}%`} />
+            <Column
+              title="Details"
+              dataIndex="wrong"
+              key="details"
+              render={(wrong) => (
+                <div className="Manage-button">
+                  <FormOutlined onClick={() => this.showScore(wrong)} />
+                </div>
+              )}
+            />
+          </Table>
 
           <div>
             <span className="u-bold">Quiz Link: </span>
