@@ -27,6 +27,15 @@ class Home extends Component {
 
   async componentDidMount() {
     const quizes = await get("/api/quizes", {});
+
+    // sort so that your own quizes are listed first
+    const mine = (quiz) => quiz.creator._id === this.props.user._id;
+    quizes.sort((a, b) => {
+      if (mine(a) && !mine(b)) return -1;
+      if (!mine(a) && mine(b)) return 1;
+      return 0;
+    });
+
     this.setState({ quizes });
   }
 
@@ -52,7 +61,11 @@ class Home extends Component {
               dataIndex="creator"
               key="creator"
               sorter={(a, b) => compare(a.creator.lastName, b.creator.lastName)}
-              render={(user) => `${user.firstName} ${user.lastName}`}
+              render={(user) => (
+                <span className={user._id === this.props.user._id ? "Home-mine" : ""}>
+                  {user.firstName} {user.lastName}
+                </span>
+              )}
             />
             <Column
               title="Date Created"
