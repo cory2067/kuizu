@@ -71,6 +71,12 @@ router.getAsync("/quizes", async (req, res) => {
   res.send(await Quiz.find({}).select("-body").populate("creator"));
 });
 
+router.deleteAsync("/quiz", async (req, res) => {
+  await Quiz.deleteOne({ _id: req.body.id });
+  await Score.deleteMany({ quiz: req.body.id });
+  res.send({});
+});
+
 router.postAsync("/score", async (req, res) => {
   const quiz = req.body.quiz.filter((word) => word.isQuestion);
   const answers = {};

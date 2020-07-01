@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import { get, post } from "../../utilities";
+import { get, post, delet } from "../../utilities";
 
 import "antd/dist/antd.css";
 import "../../utilities.css";
 import "./Home.css";
 
 import { Link } from "@reach/router";
-import { Table } from "antd";
+import { Table, Popconfirm } from "antd";
 const { Column } = Table;
 
-import { LinkOutlined, BarChartOutlined, PlusOutlined } from "@ant-design/icons";
+import { LinkOutlined, BarChartOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const compare = (a, b) => {
   if (a < b) return -1;
@@ -40,6 +40,13 @@ class Home extends Component {
       if (!mine(a) && mine(b)) return 1;
       return 0;
     });
+  };
+
+  delete = async (id) => {
+    await delet("/api/quiz", { id });
+    this.setState((state) => ({
+      quizes: state.quizes.filter((q) => q._id !== id),
+    }));
   };
 
   componentDidUpdate(prevProps) {
@@ -106,6 +113,27 @@ class Home extends Component {
                     <Link to={`/manage/${id}`}>
                       <BarChartOutlined />
                     </Link>
+                  </div>
+                )}
+              />
+            )}
+            {this.props.user.isTeacher && (
+              <Column
+                title="Delete"
+                dataIndex="_id"
+                key="delete"
+                render={(id) => (
+                  <div className="Home-button">
+                    <Popconfirm
+                      title="Are you sure delete this quiz?"
+                      onConfirm={() => this.delete(id)}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <a>
+                        <DeleteOutlined />
+                      </a>
+                    </Popconfirm>
                   </div>
                 )}
               />
