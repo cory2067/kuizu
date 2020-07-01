@@ -69,6 +69,36 @@ async function kanjiQuiz(analyzer, text) {
   return words;
 }
 
+async function particleQuiz(analyzer, text) {
+  const particles = "はがものにでとをも".split("");
+  const res = await (analyzer === "mecab" ? parse.getMecab(text) : parse.getKuromoji(text));
+  console.log(res);
+
+  const words = [];
+
+  let index = 0;
+  for (const w of res) {
+    if (w.pos === "助詞" && particles.includes(w.word)) {
+      words.push({
+        content: "？",
+        isQuestion: true,
+        parts: [{ isQuestion: true, choices: particles, answer: w.word }],
+        answer: w.word,
+        base: w.word,
+        index: ++index,
+      });
+    } else {
+      words.push({
+        content: w.word,
+        isQuestion: false,
+      });
+    }
+  }
+
+  return words;
+}
+
 module.exports = {
   kanjiQuiz,
+  particleQuiz,
 };

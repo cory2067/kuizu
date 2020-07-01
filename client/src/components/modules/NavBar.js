@@ -11,7 +11,7 @@ class NavBar extends Component {
       <div className="NavBar-container">
         <div className="NavBar-left">
           <Link to="/" className="NavBar-link">
-            <h1>quiz</h1>
+            <h1>Japanese Quiz</h1>
           </Link>
         </div>
         <div className="NavBar-right">

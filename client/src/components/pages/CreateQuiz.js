@@ -21,6 +21,7 @@ class CreateQuiz extends Component {
 
   generate = async (form) => {
     const res = await post("/api/generate", { ...form, analyzer: "kuromoji" });
+    console.log(res);
     this.setState({
       words: res,
     });
@@ -97,13 +98,13 @@ class CreateQuiz extends Component {
     return (
       <div className="u-flex-justifyCenter">
         <div style={{ width: 700, fontSize: 18 }}>
-          <Form onFinish={this.generate} initialValues={{ analyzer: "kuromoji" }}>
-            {/*<Form.Item label="Analyzer" name="analyzer">
+          <Form onFinish={this.generate} initialValues={{ type: "kanji" }}>
+            <Form.Item label="Quiz Type" name="type">
               <Radio.Group>
-                <Radio.Button value="kuromoji">Kuromoji</Radio.Button>
-                <Radio.Button value="mecab">Mecab</Radio.Button>
+                <Radio.Button value="kanji">Kanji</Radio.Button>
+                <Radio.Button value="particle">Particles</Radio.Button>
               </Radio.Group>
-            </Form.Item>*/}
+            </Form.Item>
 
             <Form.Item name="text" label="Enter some text">
               <Input.TextArea />

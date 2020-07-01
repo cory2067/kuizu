@@ -43,7 +43,12 @@ router.get("/whoami", (req, res) => {
 });
 
 router.postAsync("/generate", async (req, res) => {
-  const result = await generator.kanjiQuiz(req.body.analyzer, req.body.text);
+  let result = [];
+  if (req.body.type === "kanji") {
+    result = await generator.kanjiQuiz(req.body.analyzer, req.body.text);
+  } else if (req.body.type === "particle") {
+    result = await generator.particleQuiz(req.body.analyzer, req.body.text);
+  }
   res.send(result);
 });
 
