@@ -37,6 +37,7 @@
     "express-session": "^1.17.0",
     "google-auth-library": "^5.5.1",
     "kuromoji": "^0.1.2",
+    "lodash": "^4.17.19",
     "mecab-async": "^0.1.2",
     "mongoose": "^5.7.7",
     "nodemon": "^1.19.4",

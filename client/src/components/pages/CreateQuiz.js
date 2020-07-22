@@ -103,6 +103,7 @@ class CreateQuiz extends Component {
               <Radio.Group>
                 <Radio.Button value="kanji">Kanji</Radio.Button>
                 <Radio.Button value="particle">Particles</Radio.Button>
+                <Radio.Button value="deletion">Deletion</Radio.Button>
               </Radio.Group>
             </Form.Item>
 
