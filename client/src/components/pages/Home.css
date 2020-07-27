@@ -12,3 +12,9 @@
 .Home-mine {
   color: rgb(22, 99, 19);
 }
+
+.Home-admin-panel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--s);
+}

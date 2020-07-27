@@ -6,7 +6,7 @@ import "../../utilities.css";
 import "./Home.css";
 
 import { Link } from "@reach/router";
-import { Table, Popconfirm } from "antd";
+import { Table, Popconfirm, Radio, Button } from "antd";
 const { Column } = Table;
 
 import { LinkOutlined, BarChartOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -22,6 +22,7 @@ class Home extends Component {
     super(props);
     this.state = {
       quizes: [],
+      show: "mine",
     };
   }
 
@@ -49,6 +50,11 @@ class Home extends Component {
     }));
   };
 
+  handleFilter = (event) => {
+    const show = event.target.value;
+    this.setState({ show });
+  };
+
   componentDidUpdate(prevProps) {
     if (!prevProps.user._id && this.props.user._id) {
       const quizes = this.sortList([...this.state.quizes]);
@@ -57,16 +63,32 @@ class Home extends Component {
   }
 
   render() {
+    let quizes = this.state.quizes;
+    if (this.props.user.isTeacher && this.state.show === "mine") {
+      quizes = quizes.filter((q) => q.creator._id === this.props.user._id);
+    }
+
     return (
       <div className="u-flex-justifyCenter">
         <div>
-          <h1 className="Home-header">Quiz List</h1>
+          <h1 className="Home-header"></h1>
           {this.props.user.isTeacher && (
-            <Link to="/quiz/create">
-              <PlusOutlined /> New Quiz
-            </Link>
+            <div className="Home-admin-panel">
+              <Link to="/quiz/create">
+                <Button type="primary" icon={<PlusOutlined />}>
+                  New Quiz
+                </Button>
+              </Link>
+              <div className="Home-quiz-selector">
+                <span>Quizzes Shown: </span>
+                <Radio.Group value={this.state.show} onChange={this.handleFilter}>
+                  <Radio.Button value="mine">Mine</Radio.Button>
+                  <Radio.Button value="all">All</Radio.Button>
+                </Radio.Group>
+              </div>
+            </div>
           )}
-          <Table dataSource={this.state.quizes}>
+          <Table dataSource={quizes}>
             <Column
               title="Title"
               dataIndex="title"
@@ -79,7 +101,7 @@ class Home extends Component {
               key="creator"
               sorter={(a, b) => compare(a.creator.lastName, b.creator.lastName)}
               render={(user) => (
-                <span className={user._id === this.props.user._id ? "Home-mine" : ""}>
+                <span>
                   {user.firstName} {user.lastName}
                 </span>
               )}
