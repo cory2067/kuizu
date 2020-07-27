@@ -25,6 +25,7 @@ class Quiz extends Component {
 
     this.setState({
       title: quiz.title,
+      audio: quiz.audio,
       words: quiz.body.map((word) => ({ ...word, original: word.content })),
     });
 
@@ -100,9 +101,11 @@ class Quiz extends Component {
               </div>
 
               <div>
-                <Button onClick={this.playAudio}>
-                  <SoundOutlined /> Play Audio
-                </Button>
+                {this.state.audio && (
+                  <Button onClick={this.playAudio}>
+                    <SoundOutlined /> Play Audio
+                  </Button>
+                )}
                 <Button type="primary" onClick={this.grade} disabled={!this.props.user._id}>
                   {this.props.user._id ? "Submit" : "Log in to submit"}
                 </Button>

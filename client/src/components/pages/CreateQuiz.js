@@ -23,6 +23,7 @@ class CreateQuiz extends Component {
     const res = await post("/api/generate", { ...form, analyzer: "kuromoji" });
     console.log(res);
     this.setState({
+      quizType: form.type,
       words: res,
     });
   };
@@ -89,7 +90,8 @@ class CreateQuiz extends Component {
   };
 
   submit = async (form) => {
-    await post("/api/save", { quiz: this.state.words, title: form.title });
+    const audio = this.state.quizType === "kanji"; // todo: this could be customizable
+    await post("/api/save", { quiz: this.state.words, title: form.title, audio });
     message.success(`Created quiz ${form.title}`);
     navigate("/");
   };

@@ -60,6 +60,7 @@ router.postAsync("/save", isTeacher, async (req, res) => {
     title: req.body.title,
     creator: req.user._id,
     timestamp: new Date(),
+    audio: req.body.audio,
     body: req.body.quiz,
   });
   await quiz.save();
