@@ -70,6 +70,14 @@ async function kanjiQuiz(analyzer, text) {
   return words;
 }
 
+const generateChoices = (possible, correct) =>
+  _.sampleSize(
+    [...possible].filter((char) => char !== correct),
+    5
+  )
+    .concat([correct])
+    .sort(() => Math.random() - 0.5);
+
 async function particleQuiz(analyzer, text) {
   const particles = "はがものにでとをも".split("");
   const res = await (analyzer === "mecab" ? parse.getMecab(text) : parse.getKuromoji(text));
@@ -79,10 +87,11 @@ async function particleQuiz(analyzer, text) {
   let index = 0;
   for (const w of res) {
     if (w.pos === "助詞" && particles.includes(w.word)) {
+      const choices = generateChoices(particles, w.word);
       words.push({
-        content: "？",
+        content: `[${index}]`,
         isQuestion: true,
-        parts: [{ isQuestion: true, choices: particles, answer: w.word }],
+        parts: [{ isQuestion: true, choices, answer: w.word }],
         answer: w.word,
         base: w.word,
         index: ++index,
@@ -130,19 +139,9 @@ async function deletionQuiz(analyzer, text) {
           .concat([w])
           .sort(() => Math.random() - 0.5);
       } else if (token.type === "hiragana") {
-        choices = _.sampleSize(
-          [...hiragana].filter((char) => char !== w),
-          5
-        )
-          .concat([w])
-          .sort(() => Math.random() - 0.5);
+        choices = generateChoices(hiragana, w);
       } else if (token.type === "katakana") {
-        choices = _.sampleSize(
-          [...katakana].filter((char) => char !== w),
-          5
-        )
-          .concat([w])
-          .sort(() => Math.random() - 0.5);
+        choices = generateChoices(katakana, w);
       } else {
         words.push({
           content: w,
