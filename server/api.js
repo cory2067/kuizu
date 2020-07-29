@@ -49,7 +49,7 @@ router.postAsync("/generate", async (req, res) => {
   } else if (req.body.type === "particle") {
     result = await generator.particleQuiz(req.body.analyzer, req.body.text);
   } else if (req.body.type === "deletion") {
-    result = await generator.deletionQuiz(req.body.analyzer, req.body.text);
+    result = await generator.deletionQuiz(req.body.text, req.body.interval || 10);
   }
   res.send(result);
 });

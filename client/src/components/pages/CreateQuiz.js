@@ -4,9 +4,9 @@ import { post } from "../../utilities";
 
 import "antd/dist/antd.css";
 import "../../utilities.css";
-// import "./Home.css";
+import "./CreateQuiz.css";
 
-import { Form, Input, Button, Radio, message } from "antd";
+import { Form, Input, InputNumber, Button, Radio, message } from "antd";
 import { navigate } from "@reach/router";
 
 class CreateQuiz extends Component {
@@ -100,8 +100,8 @@ class CreateQuiz extends Component {
     return (
       <div className="u-flex-justifyCenter">
         <div style={{ width: 700, fontSize: 18 }}>
-          <Form onFinish={this.generate} initialValues={{ type: "kanji" }}>
-            <Form.Item label="Quiz Type" name="type">
+          <Form onFinish={this.generate} initialValues={{ type: "kanji", interval: 10 }}>
+            <Form.Item label="Quiz Type" name="type" className="CreateQuiz-item">
               <Radio.Group>
                 <Radio.Button value="kanji">Kanji</Radio.Button>
                 <Radio.Button value="particle">Particles</Radio.Button>
@@ -109,11 +109,17 @@ class CreateQuiz extends Component {
               </Radio.Group>
             </Form.Item>
 
-            <Form.Item name="text" label="Enter some text">
-              <Input.TextArea />
+            <Form.Item name="text" label="Enter some text" className="CreateQuiz-item">
+              <Input.TextArea rows={5} />
             </Form.Item>
 
-            <Form.Item>
+            {this.state.quizType === "deletion" && (
+              <Form.Item name="interval" label="Deletion interval" className="CreateQuiz-item">
+                <InputNumber min={1} />
+              </Form.Item>
+            )}
+
+            <Form.Item className="CreateQuiz-item">
               <Button type="primary" htmlType="submit">
                 Generate
               </Button>
@@ -142,11 +148,11 @@ class CreateQuiz extends Component {
 
           {this.state.words.length > 0 && (
             <Form onFinish={this.submit}>
-              <Form.Item name="title">
+              <Form.Item name="title" className="CreateQuiz-item">
                 <Input placeholder="Title" />
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" className="CreateQuiz-item">
                   Save
                 </Button>
               </Form.Item>

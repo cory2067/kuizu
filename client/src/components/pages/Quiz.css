@@ -1,0 +1,7 @@
+.Quiz-buttons {
+  margin-top: var(--xs);
+}
+
+.Quiz-buttons button {
+  margin-right: var(--s);
+}

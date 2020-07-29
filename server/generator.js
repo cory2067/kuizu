@@ -107,18 +107,15 @@ async function particleQuiz(analyzer, text) {
   return words;
 }
 
-const maxInterval = 10;
 const hiragana =
   "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ";
 const katakana = wanakana.toKatakana(hiragana);
 
-async function deletionQuiz(analyzer, text) {
-  //const res = await (analyzer === "mecab" ? parse.getMecab(text) : parse.getKuromoji(text));
-
+async function deletionQuiz(text, maxInterval) {
   const words = [];
 
   let index = 0;
-  let interval = maxInterval;
+  let interval = maxInterval - 1;
   for (const w of text) {
     if (interval <= 0) {
       const token = wanakana.tokenize(w, { detailed: true })[0];

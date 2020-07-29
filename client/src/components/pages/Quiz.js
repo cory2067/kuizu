@@ -5,7 +5,7 @@ import { Progress } from "antd";
 
 import "antd/dist/antd.css";
 import "../../utilities.css";
-//import "./Home.css";
+import "./Quiz.css";
 
 import { Form, Input, Button, Radio, notification } from "antd";
 import { SoundOutlined } from "@ant-design/icons";
@@ -100,7 +100,7 @@ class Quiz extends Component {
                 })}
               </div>
 
-              <div>
+              <div className="Quiz-buttons">
                 {this.state.audio && (
                   <Button onClick={this.playAudio}>
                     <SoundOutlined /> Play Audio
