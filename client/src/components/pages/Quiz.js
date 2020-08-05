@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import KanjiChooser from "../modules/KanjiChooser";
+import QuizResult from "../modules/QuizResult";
 import { post, get, formatParams } from "../../utilities";
 import { Progress } from "antd";
 
@@ -7,7 +8,7 @@ import "antd/dist/antd.css";
 import "../../utilities.css";
 import "./Quiz.css";
 
-import { Form, Input, Button, Radio, notification } from "antd";
+import { Tooltip, Button } from "antd";
 import { SoundOutlined } from "@ant-design/icons";
 
 class Quiz extends Component {
@@ -116,11 +117,7 @@ class Quiz extends Component {
               <h2>Your Score:</h2>
               <Progress type="circle" status="active" percent={this.state.result.grade} />
               <div className="u-spacer">
-                {this.state.result.wrong.map((wrong, i) => (
-                  <div key={i}>
-                    {wrong.studentAnswer} should be {wrong.answer}
-                  </div>
-                ))}
+                <QuizResult {...this.state.result} />
               </div>
             </div>
           )}

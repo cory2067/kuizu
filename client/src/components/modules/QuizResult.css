@@ -1,0 +1,7 @@
+.QuizResult-correct {
+  background-color: rgb(212, 255, 204);
+}
+
+.QuizResult-incorrect {
+  background-color: rgb(255, 204, 204);
+}

@@ -88,32 +88,25 @@ router.deleteAsync("/quiz", async (req, res) => {
 
 router.postAsync("/score", async (req, res) => {
   const quiz = req.body.quiz.filter((word) => word.isQuestion);
-  const answers = {};
-  quiz.forEach((word) => (answers[word.answer] = word));
 
-  const scores = Object.keys(answers).map((word) => {
-    const wordObj = answers[word];
-    if (wordObj.content === wordObj.answer) {
+  const scores = quiz.map((word) => {
+    if (word.content === word.answer) {
       return 1;
     }
 
     // if wrong, try to reward partial credit
-    const parts = wordObj.parts.filter((part) => part.isQuestion);
+    const parts = word.parts.filter((part) => part.isQuestion);
     return parts.filter((p) => p.studentAnswer === p.answer).length / parts.length;
   });
 
   const grade = Math.round((100 * scores.reduce((a, b) => a + b, 0)) / scores.length);
 
-  const wrong = Object.keys(answers)
-    .map((word) => ({ answer: answers[word].answer, studentAnswer: answers[word].content }))
-    .filter((word) => word.answer !== word.studentAnswer);
-
   const score = new Score({
     quiz: req.body.id,
     student: req.user._id,
     timestamp: new Date(),
+    studentQuiz: req.body.quiz,
     grade,
-    wrong,
   });
 
   await score.save();

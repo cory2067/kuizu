@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { get, post } from "../../utilities";
+import QuizResult from "../modules/QuizResult";
 
 import "antd/dist/antd.css";
 import "../../utilities.css";
@@ -28,33 +29,33 @@ class Manage extends Component {
     });
   }
 
-  showScore = (wrong) => {
+  showScore = (studentQuiz) => {
     Modal.info({
-      title: "Incorrect Answers",
-      content: (
-        <div>
-          {wrong.map((w) => (
-            <p>
-              {w.studentAnswer} (should be {w.answer})
-            </p>
-          ))}
-        </div>
-      ),
+      title: "Quiz Response",
+      content: <QuizResult studentQuiz={studentQuiz} />,
       onOk() {},
     });
   };
 
   download = () => {
+    const scores = this.state.scores.map((s) => ({
+      ...s,
+      wrong: [
+        ...new Set(
+          s.studentQuiz
+            .filter((w) => w.isQuestion && w.answer !== w.content)
+            .map((w) => `${w.content} (${w.answer})`)
+        ),
+      ].join(", "),
+    }));
+
     const header = "Student,Score,Quiz Title,Quiz Type,Timestamp,Incorrect Answers";
-    const body = this.state.scores
+    const body = scores
       .map(
         (s) =>
-          `${s.student.firstName} ${s.student.lastName},${s.grade},${this.state.quiz.title},${
-            this.state.quiz.type
-          },${s.timestamp},"${s.wrong.map((w) => `${w.studentAnswer} (${w.answer})`).join(", ")}"`
+          `${s.student.firstName} ${s.student.lastName},${s.grade},${this.state.quiz.title},${this.state.quiz.type},${s.timestamp},"${s.wrong}"`
       )
       .join("\n");
-    console.log(body);
 
     const dl = document.createElement("a");
     dl.href = "data:text/csv;chartset=utf-8," + encodeURIComponent(`${header}\n${body}`);
@@ -86,11 +87,11 @@ class Manage extends Component {
             <Column title="Grade" dataIndex="grade" key="grade" render={(grade) => `${grade}%`} />
             <Column
               title="Details"
-              dataIndex="wrong"
+              dataIndex="studentQuiz"
               key="details"
-              render={(wrong) => (
+              render={(studentQuiz) => (
                 <div className="Manage-button">
-                  <FormOutlined onClick={() => this.showScore(wrong)} />
+                  <FormOutlined onClick={() => this.showScore(studentQuiz)} />
                 </div>
               )}
             />

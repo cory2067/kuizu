@@ -5,7 +5,7 @@ const ScoreSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   timestamp: Date,
   grade: Number,
-  wrong: [{ answer: String, studentAnswer: String }],
+  studentQuiz: [Object],
 });
 
 // compile model from schema
