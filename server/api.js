@@ -55,12 +55,13 @@ router.postAsync("/generate", async (req, res) => {
 });
 
 router.postAsync("/save", isTeacher, async (req, res) => {
-  console.log(req.user);
+  const audio = req.body.type === "kanji";
   const quiz = new Quiz({
     title: req.body.title,
     creator: req.user._id,
     timestamp: new Date(),
-    audio: req.body.audio,
+    audio: req.body.type === "kanji",
+    type: req.body.type,
     body: req.body.quiz,
   });
   await quiz.save();

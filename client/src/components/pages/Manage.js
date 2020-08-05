@@ -5,8 +5,8 @@ import "antd/dist/antd.css";
 import "../../utilities.css";
 import "./Manage.css";
 
-import { Tooltip, Table, Modal } from "antd";
-import { FormOutlined } from "@ant-design/icons";
+import { Tooltip, Table, Modal, Button } from "antd";
+import { FormOutlined, DownloadOutlined } from "@ant-design/icons";
 const { Column } = Table;
 
 import { Link } from "@reach/router";
@@ -44,11 +44,38 @@ class Manage extends Component {
     });
   };
 
+  download = () => {
+    const header = "Student,Score,Quiz Title,Quiz Type,Timestamp,Incorrect Answers";
+    const body = this.state.scores
+      .map(
+        (s) =>
+          `${s.student.firstName} ${s.student.lastName},${s.grade},${this.state.quiz.title},${
+            this.state.quiz.type
+          },${s.timestamp},"${s.wrong.map((w) => `${w.studentAnswer} (${w.answer})`).join(", ")}"`
+      )
+      .join("\n");
+    console.log(body);
+
+    const dl = document.createElement("a");
+    dl.href = "data:text/csv;chartset=utf-8," + encodeURIComponent(`${header}\n${body}`);
+    dl.target = "_blank";
+    dl.download = `quiz-${this.state.quiz._id}.csv`;
+    dl.click();
+  };
+
   render() {
     return (
       <div className="u-flex-justifyCenter">
         <div>
-          <h1>Grades for {this.state.quiz.title}</h1>
+          <div className="Manage-header">
+            <h1>Grades for {this.state.quiz.title} </h1>
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<DownloadOutlined />}
+              onClick={this.download}
+            />
+          </div>
           <Table dataSource={this.state.scores}>
             <Column
               title="Student"

@@ -3,3 +3,12 @@
   text-align: center;
   line-height: 0;
 }
+
+.Manage-header {
+  display: flex;
+  align-items: center;
+}
+
+.Manage-header h1 {
+  margin-right: var(--s);
+}

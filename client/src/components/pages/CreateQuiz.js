@@ -90,8 +90,11 @@ class CreateQuiz extends Component {
   };
 
   submit = async (form) => {
-    const audio = this.state.quizType === "kanji"; // todo: this could be customizable
-    await post("/api/save", { quiz: this.state.words, title: form.title, audio });
+    await post("/api/save", {
+      quiz: this.state.words,
+      title: form.title,
+      type: this.state.quizType,
+    });
     message.success(`Created quiz ${form.title}`);
     navigate("/");
   };
