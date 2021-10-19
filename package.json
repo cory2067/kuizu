@@ -36,6 +36,7 @@
     "express": "^4.16.4",
     "express-session": "^1.17.0",
     "google-auth-library": "^5.5.1",
+    "heroku-ssl-redirect": "^0.1.1",
     "kuromoji": "^0.1.2",
     "lodash": "^4.17.19",
     "mecab-async": "^0.1.2",

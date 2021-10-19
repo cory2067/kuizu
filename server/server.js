@@ -10,6 +10,7 @@ const path = require("path"); // provide utilities for working with file and dir
 const api = require("./api");
 const auth = require("./auth");
 const passport = require("./passport");
+const sslRedirect = require("heroku-ssl-redirect");
 
 const logger = require("pino")(); // import pino logger
 
@@ -20,6 +21,8 @@ db.init();
 // create a new express server
 const app = express();
 
+app.set("trust proxy", true);
+app.use(sslRedirect());
 app.use(express.json());
 
 // serve audio as static files
@@ -42,6 +45,16 @@ app.use(mongoSession);
 //register passport & passport session middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Redirect to non-www url
+app.get("*", (req, res, next) => {
+  if (req.headers.host.slice(0, 4) === "www.") {
+    const newHost = req.headers.host.slice(4);
+    return res.redirect(301, req.protocol + "://" + newHost + req.originalUrl);
+  }
+  next();
+});
+
 
 //connect authentication routes
 app.use("/auth", auth);
