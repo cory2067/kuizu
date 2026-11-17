@@ -19,6 +19,7 @@
     "url": "https://github.com/cory2067/kuizu/issues"
   },
   "homepage": "https://github.com/cory2067/kuizu#readme",
+  "engines": { "node": "22.x" },
   "dependencies": {
     "@awaitjs/express": "^0.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
